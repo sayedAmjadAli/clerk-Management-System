@@ -91,4 +91,54 @@ const getFeesByBatch = async (req, res, next) => {
   res.status(200).json({ success: true, message: "get fees by batch", fees });
 };
 
-export { addFees, getFeesByBatch, getFeesByStudent };
+
+const deleteFeesRecord = async (req, res, next) => {
+  try {
+    const { feesId } = req.params
+
+    const feeRecord = await Fee.findOne({ _id: feesId })
+
+    if (!feeRecord) {
+      return next(new ApiError(404, "Fees record does not exists with this id"))
+    }
+
+    const delFeeRecord = await Fee.deleteOne({ _id: feeRecord._id })
+
+    res.status(200).json({ success: true, message: "successfully delete fees record" })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+const updateFeesRecord = async (req, res, next) => {
+  const { semester, amount, challanNo, paymentDate } = req.body
+  try {
+    const { feesId } = req.params
+
+    const feeRecord = await Fee.findOne({ _id: feesId })
+
+    if (!feeRecord) {
+      return next(new ApiError(404, "Fees record does not exists with this id"))
+    }
+
+    feeRecord.semester = semester || feeRecord.semester
+    feeRecord.amount = amount || feeRecord.amount
+    feeRecord.challanNo = challanNo || feeRecord.challanNo
+    feeRecord.paymentDate = paymentDate || feeRecord.paymentDate
+
+    await feeRecord.save()
+    
+    res.status(200).json({ success: true, message: "successfully update fees record" })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export {
+  addFees,
+  getFeesByBatch,
+  getFeesByStudent,
+  deleteFeesRecord,
+  updateFeesRecord
+};
