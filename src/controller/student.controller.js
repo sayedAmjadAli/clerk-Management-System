@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { Student } from "../models/student.model.js"
 import { ApiError } from "../utlis/ApiError.js"
 
@@ -94,17 +95,78 @@ const updateStudent = async (req, res, next) => {
 
         await student.save()
 
-        res.status(200).json({ success: true, message:"successfully update student" })
+        res.status(200).json({ success: true, message: "successfully update student" })
     } catch (error) {
         next(error)
     }
 }
 
+
+const getStudentProfile = async (req, res, next) => {
+    const { studentId } = req.params
+
+    try {
+        const student = await Student.aggregate(
+            [
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(studentId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "fees",
+                        localField: "_id",
+                        foreignField: "student",
+                        as: "fees"
+                    }
+                }
+            ]
+        )
+
+
+        res.status(200).json({ success: true, message: "successfully get student profile",student })
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+const getStudentProfileByRollno = async (req, res, next) => {
+    const { rollno } = req.params
+
+    try {
+        const student = await Student.aggregate(
+            [
+                {
+                    $match: {
+                        rollno:rollno
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "fees",
+                        localField: "_id",
+                        foreignField: "student",
+                        as: "fees"
+                    }
+                }
+            ]
+        )
+
+
+        res.status(200).json({ success: true, message: "successfully get student profile ",student })
+    } catch (error) {
+        next(error)
+    }
+}
 export {
     getStudents,
     register,
     getStudentByBatch,
     getStudentByRollno,
     deleteStudent,
-    updateStudent
+    updateStudent,
+    getStudentProfile,
+    getStudentProfileByRollno
 }
