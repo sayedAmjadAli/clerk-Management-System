@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getStudentByBatch, getStudentByRollno, getStudents, register } from "../controller/student.controller.js";
+import { deleteStudent, getStudentByBatch, getStudentByRollno, getStudents, register, updateStudent } from "../controller/student.controller.js";
 import {auth} from "../middleware/auth.js"
 
 
@@ -9,4 +9,6 @@ studentRoute.route("/register").post(auth,register)
 studentRoute.route("/getStudents").get(auth,getStudents)
 studentRoute.route("/getStudentsByBatch/:batch").get(auth,getStudentByBatch)
 studentRoute.route("/getStudentByRollno/:rollno").get(auth,getStudentByRollno)
+
+studentRoute.route("/:studentId").patch(updateStudent).delete(deleteStudent)
 export {studentRoute}

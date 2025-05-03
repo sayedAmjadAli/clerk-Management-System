@@ -94,7 +94,7 @@ const updateStudent = async (req, res, next) => {
 
         await student.save()
 
-        res.status(200).json({ success: true, message })
+        res.status(200).json({ success: true, message:"successfully update student" })
     } catch (error) {
         next(error)
     }
