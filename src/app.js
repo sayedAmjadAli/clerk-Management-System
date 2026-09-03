@@ -9,7 +9,7 @@ app.use(express.json({limit:"16kb"}))
 app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(cookieParser())
 app.use(cors({
-    origin:["http://localhost:5173","http://148.230.97.14:5173"], 
+    origin:["http://localhost:5173","https://ic-flow-web-01.vercel.app"], 
     credentials: true 
   }))
 
