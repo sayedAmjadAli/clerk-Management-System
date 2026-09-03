@@ -13,14 +13,12 @@ app.use(cors({
     credentials: true 
   }))
 
-import { userRoute } from "./route/user.route.js";
-app.use("/api/user",userRoute)
-
-import { departmentRoute } from "./route/deparment.route.js";
-app.use("/api/department",departmentRoute)
-
 import { studentRoute } from "./route/student.route.js";
 app.use("/api/student",studentRoute)
 
-import { feeRoute } from "./route/fee.route.js";
-app.use("/api/fee",feeRoute)
+import { candidateRoute } from "./route/candidate.route.js";
+app.use("/api/candidate",candidateRoute)
+
+
+import { voteRoute } from "./route/vote.route.js";
+app.use("/api/vote",voteRoute)

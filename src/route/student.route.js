@@ -1,14 +1,31 @@
 import { Router } from "express";
-import { deleteStudent, getStudentByBatch, getStudentByRollno, getStudentProfile, getStudentProfileByRollno, getStudents, register, updateStudent } from "../controller/student.controller.js";
-import {auth} from "../middleware/auth.js"
+import {
+  register,
+  getStudents,
+  getStudentsByClass,
+  getStudentByVoteNumber,
+  updateStudent,
+  deleteStudent,
+} from "../controller/student.controller.js";
 
+const studentRoute = Router();
 
-const studentRoute=Router()
+// Register a new student
+studentRoute.route("/register").post(register);
 
-studentRoute.route("/register").post(auth,register)
-studentRoute.route("/getStudents").get(auth,getStudents)
-studentRoute.route("/getStudentsByBatch/:batch").get(auth,getStudentByBatch)
-studentRoute.route("/getStudentByRollno/:rollno").get(auth,getStudentByRollno)
-studentRoute.route("/rollno/:rollno").get(getStudentProfileByRollno)
-studentRoute.route("/:studentId").patch(updateStudent).delete(deleteStudent).get(getStudentProfile)
-export {studentRoute}
+// Get all students
+studentRoute.route("/getStudents").get(getStudents);
+
+// Get students by class
+studentRoute.route("/getStudentsByClass/:class").get(getStudentsByClass);
+
+// Get student by vote number
+studentRoute.route("/getStudentByVoteNumber/:voteNumber").get(getStudentByVoteNumber);
+
+// Update or delete a student by ID
+studentRoute
+  .route("/:studentId")
+  .patch(updateStudent)
+  .delete(deleteStudent);
+
+export { studentRoute };

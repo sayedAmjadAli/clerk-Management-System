@@ -3,8 +3,9 @@ import { DB_URL } from "./env.js"
 
 const dbConnection =async()=>{
     try {
-       const connection=await mongoose.connect(`${DB_URL}/EduIt`) 
-       
+       const connection=await mongoose.connect(`${DB_URL}`) 
+       console.log(connection.connection.name)
+
       console.log("Db Connected")
     } catch (error) {
         console.log("Error: while connecting with database",error)
