@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   register,
+  login,
   getStudents,
   getStudentsByClass,
   getStudentByVoteNumber,
@@ -12,6 +13,9 @@ const studentRoute = Router();
 
 // Register a new student
 studentRoute.route("/register").post(register);
+
+// Login student
+studentRoute.route("/login").post(login);
 
 // Get all students
 studentRoute.route("/getStudents").get(getStudents);

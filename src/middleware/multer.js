@@ -1,12 +1,22 @@
 import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Ensure destination directory exists
+const profileDir = "./public/profile";
+if (!fs.existsSync(profileDir)) {
+  fs.mkdirSync(profileDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './public/temp')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname + '-' + Date.now())
-    }
-  })
-  
-export const upload = multer({ storage: storage })
+  destination: function (req, file, cb) {
+    cb(null, profileDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
+
+export const upload = multer({ storage: storage });

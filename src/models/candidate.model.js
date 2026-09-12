@@ -2,12 +2,13 @@ import mongoose from "mongoose";
 
 const candidateSchema = new mongoose.Schema(
   {
-    position: { type: String, required: true, trim: true }, // e.g., "President", "General Secretary"
+    position: { type: String, required: true, trim: true },
     candidates: [
       {
         name: { type: String, required: true, trim: true },
+        profile: { type: String, required: true }, // Stores filename (e.g. "image-1710000.jpg")
       },
-    ], // multiple candidates under same position
+    ],
   },
   { timestamps: true }
 );
