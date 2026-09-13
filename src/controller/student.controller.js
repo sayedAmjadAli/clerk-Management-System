@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { Student } from "../models/student.model.js";
 import { ApiError } from "../utlis/ApiError.js";
@@ -31,15 +30,12 @@ const register = async (req, res, next) => {
       }
     }
 
-    // Hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+  
     // Create student
     const student = await Student.create({
       username,
       fatherName,
-      password: hashedPassword,
+      password,
       class: studentClass,
       section,
       voteNumber,
@@ -75,7 +71,7 @@ const login = async (req, res, next) => {
     }
 
     // Compare passwords
-    const isPasswordValid = await bcrypt.compare(password, student.password);
+    const isPasswordValid = password === student.password ? true : false; 
     if (!isPasswordValid) {
       return next(new ApiError(401, "Invalid username or password"));
     }

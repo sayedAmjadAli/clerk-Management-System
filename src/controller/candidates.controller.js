@@ -1,5 +1,6 @@
 import { Candidate } from "../models/candidate.model.js";
-import { ApiError } from "../utlis/ApiError.js";
+import { ApiError } from "../utlis/ApiError.js"; // Note: fix typo if directory is 'utils'
+import { cloudinaryUpload } from "../utlis/cloudinary.js"; // Import Cloudinary utility
 
 // ✅ Create a new position with candidates (multipart/form-data)
 const createPosition = async (req, res, next) => {
@@ -26,18 +27,28 @@ const createPosition = async (req, res, next) => {
     }
 
     const files = req.files || [];
-    
-    // Map each candidate with its corresponding uploaded image filename
-    const formattedCandidates = candidatesData.map((cand, index) => {
-      const file = files[index];
-      if (!file) {
-        throw new ApiError(400, `Profile picture is required for candidate: ${cand.name}`);
-      }
-      return {
-        name: cand.name,
-        profile: file.filename, // Store only the filename in DB
-      };
-    });
+
+    // Map each candidate with its corresponding uploaded image on Cloudinary
+    const formattedCandidates = await Promise.all(
+      candidatesData.map(async (cand, index) => {
+        const file = files[index];
+        if (!file) {
+          throw new ApiError(400, `Profile picture is required for candidate: ${cand.name}`);
+        }
+
+        // Upload local temporary file to Cloudinary
+        const cloudinaryResponse = await cloudinaryUpload(file.path);
+
+        if (!cloudinaryResponse || !cloudinaryResponse.secure_url) {
+          throw new ApiError(500, `Failed to upload profile picture for: ${cand.name}`);
+        }
+
+        return {
+          name: cand.name,
+          profile: cloudinaryResponse.secure_url, // Store Cloudinary URL in DB
+        };
+      })
+    );
 
     const newPosition = await Candidate.create({
       position,
@@ -121,9 +132,16 @@ const addCandidateToPosition = async (req, res, next) => {
       return next(new ApiError(400, "Candidate already exists for this position"));
     }
 
+    // Upload single image to Cloudinary
+    const cloudinaryResponse = await cloudinaryUpload(req.file.path);
+
+    if (!cloudinaryResponse || !cloudinaryResponse.secure_url) {
+      return next(new ApiError(500, "Failed to upload profile picture to Cloudinary"));
+    }
+
     pos.candidates.push({
       name,
-      profile: req.file.filename, // Save the image filename
+      profile: cloudinaryResponse.secure_url, // Save the secure Cloudinary URL
     });
 
     await pos.save();
