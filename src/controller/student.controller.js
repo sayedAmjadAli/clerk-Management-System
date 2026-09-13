@@ -62,10 +62,11 @@ const login = async (req, res, next) => {
   if (!username || !password || username.trim() === "" || password.trim() === "") {
     return next(new ApiError(400, "Username and password are required"));
   }
-
+ 
   try {
     // Find student by username
     const student = await Student.findOne({ username });
+    
     if (!student) {
       return next(new ApiError(401, "Invalid username or password"));
     }
