@@ -94,8 +94,7 @@ const login = async (req, res, next) => {
 // Get all students
 const getStudents = async (req, res, next) => {
   try {
-    const students = await Student.find().select("-password");
-
+    const students = await Student.find()
     if (!students || students.length === 0) {
       return next(new ApiError(404, "No students found"));
     }
